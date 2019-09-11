@@ -34,6 +34,7 @@ public class AlbumControllerTests {
         @Primary
         public ImageProvider imageProvider() {
             return Mockito.mock(ImageProvider.class);
+            
         }
     }
 
