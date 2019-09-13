@@ -37,7 +37,7 @@ public class GCPImageProvider implements ImageProvider {
     @Override
     public List<AlbumSummary> getAlbumSummaries() {
 
-        var summary = new AlbumSummary("a", "test album", "a stub method", null, LocalDateTime.now(), LocalDateTime.now());
+        var summary = new AlbumSummary("a", "test album", "edited to verify cd pipeline", null, LocalDateTime.now(), LocalDateTime.now());
 
         return Arrays.asList(summary);
     }
