@@ -1,10 +1,11 @@
 steps:
   - name: 'gcr.io/cloud-builders/mvn'
-    args: ['install']
+    id: Build source with Maven
+      args: ['install']
 
   # This step builds the container image.
   - name: 'gcr.io/cloud-builders/docker'
-    id: Build
+    id: Create docker image
     args:
       - 'build'
       - '-t'
@@ -15,7 +16,7 @@ steps:
   # The PROJECT_ID and SHORT_SHA variables are automatically
   # replaced by Cloud Build.
   - name: 'gcr.io/cloud-builders/docker'
-    id: Push
+    id: Push docker image
     args:
       - 'push'
       - 'gcr.io/$PROJECT_ID/photoapp:$SHORT_SHA'
@@ -40,7 +41,7 @@ steps:
       - '-c'
       - |
         sed "s/GOOGLE_CLOUD_PROJECT/${PROJECT_ID}/g" kubernetes.yaml.tpl | \
-        sed "s/COMMIT_SHA/${SHORT_SHA}/g" > photoapp-env/kubernetes.yaml
+        sed "s/COMMIT_SHA/${SHORT_SHA}/g" > github_jacobbevan_photoapp-env/kubernetes.yaml
 
   # This step pushes the manifest back to hello-cloudbuild-env
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -50,11 +51,11 @@ steps:
       - '-c'
       - |
         set -x && \
-        cd photoapp-env && \
+        cd github_jacobbevan_photoapp-env && \
         git add kubernetes.yaml && \
-        git commit -m "Deploying image gcr.io/${PROJECT_ID}/hello-cloudbuild:${SHORT_SHA}
+        git commit -m "Deploying image gcr.io/${PROJECT_ID}/photoapp:${SHORT_SHA}
         Built from commit ${COMMIT_SHA} of repository photoapp-java
         Author: $(git log --format='%an <%ae>' -n 1 HEAD)" && \
-        git push origin candidate
+        git push origin candidate-dev
 
 images: ['gcr.io/$PROJECT_ID/photoapp']
