@@ -27,8 +27,8 @@ steps:
     args:
       - '-c'
       - |
-        gcloud source repos clone photoapp-env && \
-        cd photoapp-env && \
+        gcloud source repos clone github_jacobbevan_photoapp-env && \
+        cd github_jacobbevan_photoapp-env && \
         git checkout candidate-dev && \
         git config user.email $(gcloud auth list --filter=status:ACTIVE --format='value(account)')
 
