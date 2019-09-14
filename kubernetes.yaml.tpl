@@ -19,6 +19,12 @@ spec:
         image: gcr.io/GOOGLE_CLOUD_PROJECT/photoapp:COMMIT_SHA
         ports:
         - containerPort: 8080
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/key.json
 ---
 kind: Service
 apiVersion: v1

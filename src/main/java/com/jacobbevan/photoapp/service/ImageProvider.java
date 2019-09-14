@@ -5,6 +5,7 @@ import com.jacobbevan.photoapp.model.FilterCriteria;
 import com.jacobbevan.photoapp.model.ImageSummary;
 import com.jacobbevan.photoapp.model.SearchResult;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface ImageProvider {
@@ -14,7 +15,7 @@ public interface ImageProvider {
         FullImage
     }
 
-    byte[] getImage(ImageType imageType, String id);
+    byte[] getImage(ImageType imageType, String id) throws IOException;
     AlbumSummary getAlbumSummary(String id);
     List<ImageSummary> getImageSummaries(FilterCriteria filter);
     List<AlbumSummary> getAlbumSummaries();

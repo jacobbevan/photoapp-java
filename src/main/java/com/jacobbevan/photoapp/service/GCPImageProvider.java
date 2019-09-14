@@ -1,11 +1,14 @@
 package com.jacobbevan.photoapp.service;
 
+import com.google.cloud.storage.*;
 import com.jacobbevan.photoapp.model.AlbumSummary;
 import com.jacobbevan.photoapp.model.FilterCriteria;
 import com.jacobbevan.photoapp.model.ImageSummary;
 import com.jacobbevan.photoapp.model.SearchResult;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -13,15 +16,24 @@ import java.util.List;
 @Service
 public class GCPImageProvider implements ImageProvider {
 
+    private final Storage storage;
+    private final BucketOptions options;
 
-    public void GCPImageProvider()
+    public GCPImageProvider()
     {
-
+        this.options = new BucketOptions();
+        this.storage = StorageOptions.getDefaultInstance().getService();
     }
 
     @Override
-    public byte[] getImage(ImageType imageType, String id) {
-        return new byte[0];
+    public byte[] getImage(ImageType imageType, String id) throws IOException {
+        //TODO must be possible to return as a stream rather than fully realising the byte array
+        try(var byteStream = new ByteArrayOutputStream()) {
+
+            var blob = storage.get(BlobId.of(options.getBucket(imageType), id));
+            blob.downloadTo(byteStream);
+            return byteStream.toByteArray();
+        }
     }
 
     @Override
