@@ -14,6 +14,10 @@ spec:
       labels:
         app: photoapp
     spec:
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: store-key
       containers:
       - name: photoapp
         image: gcr.io/GOOGLE_CLOUD_PROJECT/photoapp:COMMIT_SHA
