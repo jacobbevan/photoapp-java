@@ -61,9 +61,7 @@ public class GCPImageProvider implements ImageProvider {
 
             var imageBytes =  byteStream.toByteArray();
 
-            return ImageTransform.createThumbnail(imageBytes);
-
-
+            return imageBytes;
         }
     }
 

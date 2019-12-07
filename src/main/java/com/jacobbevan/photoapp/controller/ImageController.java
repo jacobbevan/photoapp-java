@@ -10,9 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -95,7 +93,5 @@ public static ImageSummary EnrichImageUris(ImageSummary summary)
         summary.FullImage = new Uri($"{API_ROUTE}/Fullimage/{summary.Id}", UriKind.Relative);
         return summary;
         }
-
      */
-
 }

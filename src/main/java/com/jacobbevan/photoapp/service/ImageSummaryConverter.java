@@ -2,7 +2,6 @@ package com.jacobbevan.photoapp.service;
 
 import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.Key;
-import com.google.cloud.datastore.KeyFactory;
 import com.jacobbevan.photoapp.model.ImageSummary;
 
 public class ImageSummaryConverter implements EntityConverter<ImageSummary> {
