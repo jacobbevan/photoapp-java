@@ -1,19 +1,23 @@
 package com.jacobbevan.photoapp.controller;
-
-
 import com.jacobbevan.photoapp.model.FilterCriteria;
 import com.jacobbevan.photoapp.model.ImageSummary;
 import com.jacobbevan.photoapp.service.ImageProvider;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.*;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
 
 @RestController
 public class ImageController
@@ -29,50 +33,49 @@ public class ImageController
     }
 
     @RequestMapping(value = "/api/images", method = RequestMethod.GET)
-    public List<ImageSummary> getImageSummaries(FilterCriteria filter)
-    {
+    public List<ImageSummary> getImageSummaries(FilterCriteria filter) throws IOException {
         var results = imageProvider.getImageSummaries(filter);
-        //TODO think Spring will just take care of this for is if wired up correctly
-        //return results.Select(s=>EnrichImageUris(s));
+
+        for(ImageSummary s : results) {
+            Link thumbLink = linkTo(methodOn(ImageController.class).getThumb(s.getEncodedId())).withRel("thumb");
+            Link fullLink = linkTo(methodOn(ImageController.class).getFull(s.getEncodedId())).withRel("image");
+            s.add(fullLink);
+            s.add(thumbLink);
+        }
         return results;
     }
 
     @RequestMapping(value = "/api/images/thumbnail/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public @ResponseBody byte[] getThumb(@PathVariable String id) throws IOException {
-        logger.info("getThumb "+ id);
+    public @ResponseBody HttpEntity<byte[]> getThumb(@PathVariable String id) throws IOException {
 
-        //TODO
-        //if(id == null)
-        //    return this.NotFound();
+        String decodedId = ImageSummary.getDecodedId(id);
+        logger.info("getThumb "+ decodedId );
 
         try {
-            return imageProvider.getImage(ImageProvider.ImageType.Thumbnail, id);
+            return new HttpEntity<>(imageProvider.getImage(ImageProvider.ImageType.Thumbnail,  decodedId));
         } catch (IOException e) {
 
-            logger.error("Exception when requesting id " + id, e);
+            logger.error("Exception when requesting id " + decodedId, e);
+            throw e;
+        }
+    }
+
+    @RequestMapping(value = "/api/images/full/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public @ResponseBody HttpEntity<byte[]> getFull(@PathVariable String id) throws IOException {
+
+        String decodedId = ImageSummary.getDecodedId(id);
+        logger.info("getThumb "+ decodedId );
+
+        try {
+            return new HttpEntity<>(imageProvider.getImage(ImageProvider.ImageType.FullImage, decodedId));
+        } catch (IOException e) {
+
+            logger.error("Exception when requesting id " + decodedId, e);
             throw e;
         }
     }
 
     /*
-
-        [HttpGet("FullImage/{id}")]
-public async Task<IActionResult> GetFull(string id)
-        {
-        if(id == null)
-        return this.NotFound();
-
-        var  image = await _imageProvider.GetImage(ImageType.FullImage, id);
-
-        return this.File(image, "image/jpeg");
-        }
-
-
-        [HttpGet("reindex")]
-        public void GetReIndex()
-        {
-            imageProvider.reIndex();
-        }
 
         [HttpPut("{id}")]
 public Task Put(int id, [FromBody] ImageSummary value)

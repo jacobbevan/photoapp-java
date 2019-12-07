@@ -1,19 +1,24 @@
 package com.jacobbevan.photoapp.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class AlbumSummary {
 
 
-    private String id;
+    private long id;
     private String name;
     private String description;
     private List<String> imageIds;
-    private LocalDateTime created;
-    private LocalDateTime updated;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private ZonedDateTime created;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private ZonedDateTime updated;
 
-    public AlbumSummary(String id, String name, String description, List<String> imageIds, LocalDateTime created, LocalDateTime updated) {
+    public AlbumSummary(long id, String name, String description, List<String> imageIds, ZonedDateTime created, ZonedDateTime  updated) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -22,9 +27,11 @@ public class AlbumSummary {
         this.updated = updated;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
+
+    public void setId(long id) { this.id = id;}
 
     public String getName() {
         return name;
@@ -38,11 +45,11 @@ public class AlbumSummary {
         return imageIds;
     }
 
-    public LocalDateTime getCreated() {
+    public ZonedDateTime  getCreated() {
         return created;
     }
 
-    public LocalDateTime getUpdated() {
+    public ZonedDateTime  getUpdated() {
         return updated;
     }
 }

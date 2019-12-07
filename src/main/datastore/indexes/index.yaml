@@ -1,0 +1,7 @@
+indexes:
+  - kind: ImageSummary
+    properties:
+      - name: account
+        direction: asc
+      - name: updated
+        direction: desc

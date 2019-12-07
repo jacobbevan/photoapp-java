@@ -9,8 +9,8 @@ public class BucketOptions {
 
     public BucketOptions() {
         //TODO just till i work out how to do configuration
-        this.fullImage ="photoapp-originals-dev";
-        this.thumbNail = "photoapp-originals-dev";
+        this.fullImage ="photoapp-originals";
+        this.thumbNail = "photoapp-thumbs";
     }
 
     public BucketOptions(String fullImage, String thumbNail) {
