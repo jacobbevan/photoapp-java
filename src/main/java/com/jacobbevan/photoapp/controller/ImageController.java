@@ -16,7 +16,7 @@ import java.util.List;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class ImageController
 {

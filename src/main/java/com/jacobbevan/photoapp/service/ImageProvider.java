@@ -17,9 +17,8 @@ public interface ImageProvider {
 
     byte[] getImage(ImageType imageType, String id) throws IOException;
     AlbumSummary getAlbumSummary(String id);
-    List<ImageSummary> getImageSummaries(FilterCriteria filter);
+    List<ImageSummary> getImageSummaries(FilterCriteria filter, String pageCursor, String pageSize);
     List<AlbumSummary> getAlbumSummaries();
-    void reIndex();
     ImageSummary putImage(byte[] fileContent, String fileName, String contentType, String folder);
     void deleteImage(String id);
     void deleteAlbum(String id);

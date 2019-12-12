@@ -14,9 +14,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -71,12 +70,24 @@ public class GCPImageProvider implements ImageProvider {
     }
 
     @Override
-    public List<ImageSummary> getImageSummaries(FilterCriteria filter) {
+    public List<ImageSummary> getImageSummaries(FilterCriteria filter, String pageCursor, String pageSize) {
+
+        EntityQuery.Builder queryBuilder = Query.newEntityQueryBuilder()
+            .setKind("ImageSummary")
+            .setFilter(StructuredQuery.PropertyFilter.eq("account", "azb"))
+            .setOrderBy(StructuredQuery.OrderBy.desc("updated"))
+            .setLimit(100);
+
+        if(pageCursor!=null) {
+            Cursor cursor = Cursor.fromUrlSafe(pageCursor);
+            queryBuilder.setStartCursor(cursor);
+        }
 
         Query<Entity> query = Query.newEntityQueryBuilder()
                 .setKind("ImageSummary")
                 .setFilter(StructuredQuery.PropertyFilter.eq("account", "azb"))
                 .setOrderBy(StructuredQuery.OrderBy.desc("updated"))
+                .setLimit(100)
                 .build();
 
         var ret = new ArrayList<ImageSummary>();
@@ -84,6 +95,7 @@ public class GCPImageProvider implements ImageProvider {
         QueryResults<Entity> entities = datastore.run(query);
         entities.forEachRemaining(t->ret.add(this.imageConverter.to(t)));
 
+        String endCursor = entities.getCursorAfter().toUrlSafe();
         return ret;
     }
 
@@ -104,11 +116,6 @@ public class GCPImageProvider implements ImageProvider {
         }
 
         return ret;
-    }
-
-    @Override
-    public void reIndex() {
-
     }
 
     @Override
