@@ -1,10 +1,15 @@
 package com.jacobbevan.photoapp.model;
 
-public class FilterCriteria {
+import org.springframework.hateoas.RepresentationModel;
+
+public class FilterCriteria extends RepresentationModel {
 
     private String albumId;
     private String textSearch;
     private String startKey;
+
+    public FilterCriteria() {
+    }
 
     public FilterCriteria(String albumId, String textSearch, String startKey) {
         this.albumId = albumId;

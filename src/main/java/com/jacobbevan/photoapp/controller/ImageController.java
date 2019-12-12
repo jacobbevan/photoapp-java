@@ -1,6 +1,7 @@
 package com.jacobbevan.photoapp.controller;
 import com.jacobbevan.photoapp.model.FilterCriteria;
 import com.jacobbevan.photoapp.model.ImageSummary;
+import com.jacobbevan.photoapp.model.QueryResult;
 import com.jacobbevan.photoapp.service.ImageProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -31,15 +31,24 @@ public class ImageController
     }
 
     @RequestMapping(value = "/api/images", method = RequestMethod.GET)
-    public List<ImageSummary> getImageSummaries(FilterCriteria filter) throws IOException {
+    public QueryResult<ImageSummary> getImageSummaries(
+            @RequestParam(value = "albumId", required = false)String albumId,
+            @RequestParam(value = "textSearch", required = false)String textSearch,
+            @RequestParam(value = "startKey", required = false)String startKey) throws IOException {
+
+        FilterCriteria filter = new FilterCriteria(albumId, textSearch, startKey);
+
         var results = imageProvider.getImageSummaries(filter);
 
-        for(ImageSummary s : results) {
+        for(ImageSummary s : results.getRecords()) {
             Link thumbLink = linkTo(methodOn(ImageController.class).getThumb(s.getEncodedId())).withRel("thumb");
             Link fullLink = linkTo(methodOn(ImageController.class).getFull(s.getEncodedId())).withRel("image");
             s.add(fullLink);
             s.add(thumbLink);
         }
+
+        Link nextPage = linkTo(methodOn(ImageController.class).getImageSummaries(filter.getAlbumId(), filter.getTextSearch(), results.getNextStartKey())).withRel("next").expand();
+        results.add(nextPage);
         return results;
     }
 

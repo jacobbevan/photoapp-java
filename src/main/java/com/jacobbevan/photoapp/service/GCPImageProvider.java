@@ -3,11 +3,7 @@ package com.jacobbevan.photoapp.service;
 import com.google.cloud.Timestamp;
 import com.google.cloud.datastore.*;
 import com.google.cloud.storage.*;
-import com.jacobbevan.photoapp.model.AlbumSummary;
-import com.jacobbevan.photoapp.model.FilterCriteria;
-import com.jacobbevan.photoapp.model.ImageSummary;
-import com.jacobbevan.photoapp.model.SearchResult;
-import com.jacobbevan.photoapp.utility.ImageTransform;
+import com.jacobbevan.photoapp.model.*;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -15,7 +11,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -70,33 +65,27 @@ public class GCPImageProvider implements ImageProvider {
     }
 
     @Override
-    public List<ImageSummary> getImageSummaries(FilterCriteria filter, String pageCursor, String pageSize) {
+    public QueryResult<ImageSummary> getImageSummaries(FilterCriteria filter) {
 
         EntityQuery.Builder queryBuilder = Query.newEntityQueryBuilder()
             .setKind("ImageSummary")
             .setFilter(StructuredQuery.PropertyFilter.eq("account", "azb"))
             .setOrderBy(StructuredQuery.OrderBy.desc("updated"))
-            .setLimit(100);
+            .setLimit(24);
 
-        if(pageCursor!=null) {
-            Cursor cursor = Cursor.fromUrlSafe(pageCursor);
+        if(filter.getStartKey()!=null) {
+            Cursor cursor = Cursor.fromUrlSafe(filter.getStartKey());
             queryBuilder.setStartCursor(cursor);
         }
 
-        Query<Entity> query = Query.newEntityQueryBuilder()
-                .setKind("ImageSummary")
-                .setFilter(StructuredQuery.PropertyFilter.eq("account", "azb"))
-                .setOrderBy(StructuredQuery.OrderBy.desc("updated"))
-                .setLimit(100)
-                .build();
 
         var ret = new ArrayList<ImageSummary>();
 
-        QueryResults<Entity> entities = datastore.run(query);
+        QueryResults<Entity> entities = datastore.run(queryBuilder.build());
         entities.forEachRemaining(t->ret.add(this.imageConverter.to(t)));
 
         String endCursor = entities.getCursorAfter().toUrlSafe();
-        return ret;
+        return new QueryResult<>(ret, endCursor);
     }
 
     @Override

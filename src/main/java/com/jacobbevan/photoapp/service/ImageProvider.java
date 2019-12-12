@@ -1,9 +1,6 @@
 package com.jacobbevan.photoapp.service;
 
-import com.jacobbevan.photoapp.model.AlbumSummary;
-import com.jacobbevan.photoapp.model.FilterCriteria;
-import com.jacobbevan.photoapp.model.ImageSummary;
-import com.jacobbevan.photoapp.model.SearchResult;
+import com.jacobbevan.photoapp.model.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,7 +14,7 @@ public interface ImageProvider {
 
     byte[] getImage(ImageType imageType, String id) throws IOException;
     AlbumSummary getAlbumSummary(String id);
-    List<ImageSummary> getImageSummaries(FilterCriteria filter, String pageCursor, String pageSize);
+    QueryResult<ImageSummary> getImageSummaries(FilterCriteria filter);
     List<AlbumSummary> getAlbumSummaries();
     ImageSummary putImage(byte[] fileContent, String fileName, String contentType, String folder);
     void deleteImage(String id);

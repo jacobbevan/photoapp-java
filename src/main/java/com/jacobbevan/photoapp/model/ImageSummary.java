@@ -2,8 +2,6 @@ package com.jacobbevan.photoapp.model;
 
 import com.adobe.internal.xmp.impl.Base64;
 import org.springframework.hateoas.RepresentationModel;
-
-import java.net.URL;
 import java.time.ZonedDateTime;
 
 public class ImageSummary extends RepresentationModel {
